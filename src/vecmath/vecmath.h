@@ -101,6 +101,7 @@ public:
 
 	//theta is like 3.14/2 etc.. not in degree
 	//counterclockwise
+	//reference: http://www.cnblogs.com/graphics/archive/2012/08/10/2627458.html
 	void rotateArbitraryLine(const vec3f axis_,vec3f & output, double theta){
 		vec3f v1 = *this;
 		double pOut[4][4];
