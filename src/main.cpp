@@ -79,6 +79,7 @@ extern int optind, opterr, optopt;
 
 RayTracer* theRayTracer;
 TraceUI* traceUI;
+int global_depth = 10;
 
 //
 // options from program parameters
@@ -205,4 +206,6 @@ int main(int argc, char **argv) {
 
 		return Fl::run();
 	}
+
+
 }

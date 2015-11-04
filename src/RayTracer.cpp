@@ -8,6 +8,10 @@
 #include "scene/ray.h"
 #include "fileio/read.h"
 #include "fileio/parse.h"
+#include "ui/TraceUI.h"
+
+extern TraceUI* traceUI;
+extern int global_depth;
 
 // Trace a top-level ray through normalized window coordinates (x,y)
 // through the projection plane, and out into the scene.  All we do is
@@ -17,7 +21,7 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	return traceRay( scene, r, vec3f(1.0,1.0,1.0), 0 ).clamp();
+	return traceRay(scene, r, vec3f(1.0, 1.0, 1.0), traceUI->getDepth()).clamp();
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
@@ -25,6 +29,12 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 vec3f RayTracer::traceRay( Scene *scene, const ray& r, 
 	const vec3f& thresh, int depth )
 {
+	//for debug,we can see how many times the recursive run.
+	if (depth < global_depth){
+		global_depth = depth;
+		printf("new depth: %d", global_depth);
+	}
+
 	isect i;
 
 	if( scene->intersect( r, i ) ) {
@@ -40,7 +50,40 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 		// rays.
 
 		const Material& m = i.getMaterial();
-		return m.shade(scene, r, i);
+		vec3f I = m.shade(scene, r, i);		//phone model
+
+		if (depth >= 1){
+			//reflection
+			ray R = getReflectDirection(r, i);
+			vec3f I1 = traceRay(scene, R, vec3f(1.0, 1.0, 1.0), depth - 1);
+			I1[0] *= m.kr[0];
+			I1[1] *= m.kr[1];
+			I1[2] *= m.kr[2];
+			I += I1;
+
+			//retraction
+			double index_of_air = 1.000277;
+			double n_i = 0.0;
+			double n_t = 0.0;
+			if (isEnteringObject(r, i)){
+				n_i = index_of_air;
+				n_t = m.index;
+			}
+			else{
+				n_i = m.index;
+				n_t = index_of_air;
+			}
+			if (notTIR(r, i, n_i, n_t)){
+				ray T = getRetractionDirection(r, i, n_i, n_t);
+				vec3f I2 = traceRay(scene, T, vec3f(1.0, 1.0, 1.0), depth - 1);
+				I2[0] *= m.kt[0];
+				I2[1] *= m.kt[1];
+				I2[2] *= m.kt[2];
+				I += I2;
+			}
+		}
+
+		return I;
 	
 	} else {
 		// No intersection.  This ray travels to infinity, so we color
@@ -160,4 +203,64 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[0] = (int)( 255.0 * col[0]);
 	pixel[1] = (int)( 255.0 * col[1]);
 	pixel[2] = (int)( 255.0 * col[2]);
+}
+
+ray RayTracer::getReflectDirection(ray input,isect intersection){
+	double t = intersection.t;
+	vec3f p = input.getPosition();
+	vec3f d = input.getDirection();
+	vec3f intersectPoint = input.at(t);
+
+	vec3f a = -d;
+	vec3f b = intersection.N;
+	vec3f c = a - a.dot(b) * b;
+	vec3f out = a.dot(b) * b - c;
+
+	return ray(intersectPoint, out);
+}
+
+bool RayTracer::isEnteringObject(ray input, isect intersection){
+	if (input.getDirection().dot(intersection.N) < 0){
+		return true;
+	}
+	return false;
+}
+
+bool RayTracer::notTIR(ray input, isect intersection, double n_i, double n_t){
+	//n_i : index of the material which light comes from
+	if (n_i <= n_t){
+		return true;
+	}
+	vec3f _d = -input.getDirection();
+	vec3f n = intersection.N;
+	double cos_input_angle = _d.dot(n);
+	double sin_input_angle = sqrt(1 - cos_input_angle * cos_input_angle);
+	if (sin_input_angle > n_t / n_i){
+		return false;
+	}
+	return true;
+}
+
+ray RayTracer::getRetractionDirection(const ray input, const isect intersection, double n_i, double n_t){
+	vec3f _d = -input.getDirection();
+	vec3f n = intersection.N;
+	double cos_input_angle = _d.dot(n);
+	double sin_input_angle = sqrt(1 - cos_input_angle * cos_input_angle);
+	double sin_output_angle = n_i * sin_input_angle / n_t;
+
+	double input_angle = asin(sin_input_angle);
+	double output_angle = asin(sin_output_angle);
+
+	vec3f output;
+	double M_PI = 3.1415926;
+
+	//the normal vecter is not always on the input ray side
+	if (isEnteringObject(input, intersection)){
+		_d.rotateArbitraryLine(n.cross(_d), output, -input_angle - M_PI / 2 + output_angle);
+	}
+	else{
+		_d.rotateArbitraryLine(_d.cross(n), output, -input_angle - M_PI / 2 + output_angle);
+	}
+
+	return ray(input.at(intersection.t),output);
 }

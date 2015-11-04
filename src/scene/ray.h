@@ -9,6 +9,7 @@
 
 #include "../vecmath/vecmath.h"
 #include "material.h"
+#include "ray.h"
 
 class SceneObject;
 
@@ -31,6 +32,7 @@ public:
 
 	vec3f getPosition() const { return p; }
 	vec3f getDirection() const { return d; }
+	ray getReflectDirection(isect intersection);
 
 protected:
 	vec3f p;

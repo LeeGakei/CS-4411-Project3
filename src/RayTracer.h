@@ -33,6 +33,14 @@ private:
 	Scene *scene;
 
 	bool m_bSceneLoaded;
+
+	ray getReflectDirection(ray input, isect intersection);
+
+	ray getRetractionDirection(const ray input,const isect intersection,double n_i, double n_t);
+
+	bool isEnteringObject(ray input, isect intersection);
+
+	bool notTIR(ray input, isect intersection, double n_i,double n_t);
 };
 
 #endif // __RAYTRACER_H__

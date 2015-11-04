@@ -49,7 +49,7 @@ public:
 		{ n[0] += v.n[0]; n[1] += v.n[1]; n[2] += v.n[2]; return *this; }
 	vec3f& operator -= ( const vec3f& v )
 		{ n[0] -= v.n[0]; n[1] -= v.n[1]; n[2] -= v.n[2]; return *this; }
-	vec3f& operator *= ( const double d )
+	vec3f& operator *= ( const double d)
 		{ n[0] *= d; n[1] *= d; n[2] *= d; return *this; }
 	vec3f& operator /= ( const double d )
 		{ n[0] /= d; n[1] /= d; n[2] /= d; return *this; }
@@ -98,6 +98,50 @@ public:
 	}
 
 	bool iszero() const { return ( (n[0]==0 && n[1]==0 && n[2]==0) ? true : false); };
+
+	//theta is like 3.14/2 etc.. not in degree
+	//counterclockwise
+	void rotateArbitraryLine(const vec3f axis_,vec3f & output, double theta){
+		vec3f v1 = *this;
+		double pOut[4][4];
+		vec3f axis = axis_.normalize();
+
+		double u = axis[0];
+		double v = axis[1];
+		double w = axis[2];
+
+		pOut[0][0] = cos(theta) + (u * u) * (1 - cos(theta));
+		pOut[0][1] = u * v * (1 - cos(theta)) + w * sin(theta);
+		pOut[0][2] = u * w * (1 - cos(theta)) - v * sin(theta);
+		pOut[0][3] = 0;
+
+		pOut[1][0] = u * v * (1 - cos(theta)) - w * sin(theta);
+		pOut[1][1] = cos(theta) + v * v * (1 - cos(theta));
+		pOut[1][2] = w * v * (1 - cos(theta)) + u * sin(theta);
+		pOut[1][3] = 0;
+
+		pOut[2][0] = u * w * (1 - cos(theta)) + v * sin(theta);
+		pOut[2][1] = v * w * (1 - cos(theta)) - u * sin(theta);
+		pOut[2][2] = cos(theta) + w * w * (1 - cos(theta));
+		pOut[2][3] = 0;
+
+		pOut[3][0] = 0;
+		pOut[3][1] = 0;
+		pOut[3][2] = 0;
+		pOut[3][3] = 1;
+
+		double result[4];
+		result[0] = pOut[0][0] * v1[0] + pOut[0][1] * v1[1] + pOut[0][2] * v1[2] + pOut[0][3] * 1;
+		result[1] = pOut[1][0] * v1[0] + pOut[1][1] * v1[1] + pOut[1][2] * v1[2] + pOut[1][3] * 1;
+		result[2] = pOut[2][0] * v1[0] + pOut[2][1] * v1[1] + pOut[2][2] * v1[2] + pOut[2][3] * 1;
+		result[3] = pOut[3][0] * v1[0] + pOut[3][1] * v1[1] + pOut[3][2] * v1[2] + pOut[3][3] * 1;
+		result[0] /= result[3];
+		result[1] /= result[3];
+		result[2] /= result[3];
+
+		//printf("result: %lf,%lf,%lf,%lf\n", result[0], result[1], result[2], result[3]);
+		output = vec3f(result[0], result[1], result[2]);
+	}
 
 public:
 	double n[3];
