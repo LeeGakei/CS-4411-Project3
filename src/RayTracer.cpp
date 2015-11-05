@@ -205,6 +205,10 @@ void RayTracer::tracePixel( int i, int j )
 	pixel[2] = (int)( 255.0 * col[2]);
 }
 
+Scene *RayTracer::getScene(){
+	return scene;
+}
+
 ray RayTracer::getReflectDirection(ray input,isect intersection){
 	double t = intersection.t;
 	vec3f p = input.getPosition();

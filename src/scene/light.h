@@ -7,7 +7,7 @@ class Light
 	: public SceneElement
 {
 public:
-	virtual vec3f shadowAttenuation(const vec3f& P) const = 0;
+	virtual double shadowAttenuation(const vec3f& P) const = 0;
 	virtual double distanceAttenuation( const vec3f& P ) const = 0;
 	virtual vec3f getColor( const vec3f& P ) const = 0;
 	virtual vec3f getDirection( const vec3f& P ) const = 0;
@@ -30,7 +30,7 @@ public:
 		: Light(scene, color), orientation(orien) {
 		kind = "DirectionalLight";
 	}
-	virtual vec3f shadowAttenuation(const vec3f& P) const;
+	virtual double shadowAttenuation(const vec3f& P) const;
 	virtual double distanceAttenuation( const vec3f& P ) const;
 	virtual vec3f getColor( const vec3f& P ) const;
 	virtual vec3f getDirection( const vec3f& P ) const;
@@ -51,7 +51,7 @@ public:
 		: Light(scene, color), position(pos), constant_attenuation_coeff(constant_), linear_attenuation_coeff(linear_), quadratic_attenuation_coeff(quadratic_){
 		kind = "PointLight";
 	}
-	virtual vec3f shadowAttenuation(const vec3f& P) const;
+	virtual double shadowAttenuation(const vec3f& P) const;
 	virtual double distanceAttenuation( const vec3f& P ) const;
 	virtual vec3f getColor( const vec3f& P ) const;
 	virtual vec3f getDirection( const vec3f& P ) const;
@@ -74,7 +74,7 @@ public:
 	}
 
 	//none of these really matter
-	virtual vec3f shadowAttenuation(const vec3f& P) const;
+	virtual double shadowAttenuation(const vec3f& P) const;
 	virtual double distanceAttenuation(const vec3f& P) const;
 	virtual vec3f getColor(const vec3f& P) const;
 	virtual vec3f getDirection(const vec3f& P) const;

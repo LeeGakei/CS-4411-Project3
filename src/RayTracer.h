@@ -21,6 +21,7 @@ public:
 	void traceSetup( int w, int h );
 	void traceLines( int start = 0, int stop = 10000000 );
 	void tracePixel( int i, int j );
+	Scene *getScene();
 
 	bool loadScene( char* fn );
 

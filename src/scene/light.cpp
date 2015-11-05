@@ -1,6 +1,9 @@
 #include <cmath>
 
 #include "light.h"
+#include "../RayTracer.h"
+
+extern RayTracer* theRayTracer;
 
 double DirectionalLight::distanceAttenuation( const vec3f& P ) const
 {
@@ -9,11 +12,20 @@ double DirectionalLight::distanceAttenuation( const vec3f& P ) const
 }
 
 
-vec3f DirectionalLight::shadowAttenuation( const vec3f& P ) const
+double DirectionalLight::shadowAttenuation(const vec3f& P) const
 {
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
-    return vec3f(1,1,1);
+	Scene * scene = theRayTracer->getScene();
+	isect i;
+	//from the P to the light direction, we shoot a ray and if there is no intersection, there will be no shadow
+	ray r(P, -orientation);
+	if (!scene->intersect(r, i)){
+		// no shadow
+		return 1;
+	}
+	// there is shadow
+	return 0;
 }
 
 vec3f DirectionalLight::getColor( const vec3f& P ) const
@@ -51,17 +63,36 @@ vec3f PointLight::getColor( const vec3f& P ) const
 	return color;
 }
 
+//pay attention here,this direction is from P to the pointLight
 vec3f PointLight::getDirection( const vec3f& P ) const
 {
 	return (position - P).normalize();
 }
 
 
-vec3f PointLight::shadowAttenuation(const vec3f& P) const
+double PointLight::shadowAttenuation(const vec3f& P) const
 {
     // YOUR CODE HERE:
     // You should implement shadow-handling code here.
-    return vec3f(1,1,1);
+
+	//from the pointLight to P, we shoot a ray, if there is any intersection between P and light, there is shadow
+	Scene * scene = theRayTracer->getScene();
+	isect i;
+	ray r(position, -this->getDirection(P));
+
+	if (scene->intersect(r, i)){
+		vec3f l_to_i1 = r.at(i.t) - position;
+		vec3f il_to_P = P - r.at(i.t);
+		vec3f l_to_P = P - position;
+
+		if (l_to_i1.dot(il_to_P) > 0 && l_to_i1.dot(l_to_P) > 0){
+			//there is shadow
+			return 1;
+		}
+		return 1;
+	}
+
+    return 0; 
 }
 
 
@@ -83,8 +114,8 @@ vec3f AmbientLight::getDirection(const vec3f& P) const
 }
 
 
-vec3f AmbientLight::shadowAttenuation(const vec3f& P) const
+double AmbientLight::shadowAttenuation(const vec3f& P) const
 {
-	return vec3f(1, 1, 1);
+	return 1;
 }
 
