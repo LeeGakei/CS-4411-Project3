@@ -81,13 +81,19 @@ double PointLight::shadowAttenuation(const vec3f& P) const
 	ray r(position, -this->getDirection(P));
 
 	if (scene->intersect(r, i)){
+		vec3f intersection = r.at(i.t);
 		vec3f l_to_i1 = r.at(i.t) - position;
 		vec3f il_to_P = P - r.at(i.t);
 		vec3f l_to_P = P - position;
 
+		//if it is the same point
+		if (abs(il_to_P[0]) < RAY_EPSILON && abs(il_to_P[1]) < RAY_EPSILON && abs(il_to_P[2]) < RAY_EPSILON){
+			return 1;
+		}
+
 		if (l_to_i1.dot(il_to_P) > 0 && l_to_i1.dot(l_to_P) > 0){
 			//there is shadow
-			return 1;
+			return 0;
 		}
 		return 1;
 	}
