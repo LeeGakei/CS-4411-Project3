@@ -14,7 +14,7 @@ double DirectionalLight::distanceAttenuation(const vec3f& P) const
 }
 
 
-double DirectionalLight::shadowAttenuation(const vec3f& P) const
+vec3f DirectionalLight::shadowAttenuation(const vec3f& P) const
 {
 	// YOUR CODE HERE:
 	// You should implement shadow-handling code here.
@@ -24,10 +24,10 @@ double DirectionalLight::shadowAttenuation(const vec3f& P) const
 	ray r(P, -orientation);
 	if (!scene->intersect(r, i)){
 		// no shadow
-		return 1;
+		return vec3f(1,1,1);
 	}
 	// there is shadow
-	return 0;
+	return vec3f(0,0,0);
 }
 
 vec3f DirectionalLight::getColor(const vec3f& P) const
@@ -78,7 +78,7 @@ vec3f PointLight::getDirection(const vec3f& P) const
 }
 
 
-double PointLight::shadowAttenuation(const vec3f& P) const
+vec3f PointLight::shadowAttenuation(const vec3f& P) const
 {
 	// YOUR CODE HERE:
 	// You should implement shadow-handling code here.
@@ -96,17 +96,17 @@ double PointLight::shadowAttenuation(const vec3f& P) const
 
 		//if it is the same point
 		if (abs(il_to_P[0]) < RAY_EPSILON && abs(il_to_P[1]) < RAY_EPSILON && abs(il_to_P[2]) < RAY_EPSILON){
-			return 1;
+			return vec3f(1,1,1);
 		}
 
 		if (l_to_i1.dot(il_to_P) > 0 && l_to_i1.dot(l_to_P) > 0){
 			//there is shadow
-			return 0;
+			return vec3f(0,0,0);
 		}
-		return 1;
+		return vec3f(1,1,1);
 	}
 
-	return 0;
+	return vec3f(0,0,0);
 }
 
 
@@ -128,8 +128,8 @@ vec3f AmbientLight::getDirection(const vec3f& P) const
 }
 
 
-double AmbientLight::shadowAttenuation(const vec3f& P) const
+vec3f AmbientLight::shadowAttenuation(const vec3f& P) const
 {
-	return 1;
+	return vec3f(1,1,1);
 }
 

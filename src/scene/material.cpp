@@ -48,7 +48,14 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			double nShiniess = 1 / (1.0000005 - m.shininess);
 			vec3f I2 = m.ks * pow(cosCigama, nShiniess);
 			//distance Attenuation and plus intensity of the light
-			vec3f total_I = (I1 + I2)*l->distanceAttenuation(intersectionPoint)*l->shadowAttenuation(intersectionPoint);
+			vec3f total_I = (I1 + I2)*l->distanceAttenuation(intersectionPoint);
+			//shadowAttenuation
+			{
+				vec3f shadow = l->shadowAttenuation(intersectionPoint);
+				total_I[0] *= shadow[0];
+				total_I[1] *= shadow[1];
+				total_I[2] *= shadow[2];
+			}
 			vec3f intensityOfLight = l->getColor(intersectionPoint);
 			total_I[0] *= intensityOfLight[0];
 			total_I[1] *= intensityOfLight[1];
