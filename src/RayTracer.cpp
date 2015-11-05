@@ -76,7 +76,6 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				}
 				if (notTIR(r, i, n_i, n_t)){
 					ray T = getRetractionDirection(r, i, n_i, n_t);
-					T.isRefracted = true;
 					vec3f I2 = traceRay(scene, T, vec3f(1.0, 1.0, 1.0), depth - 1);
 					I2[0] *= m.kt[0];
 					I2[1] *= m.kt[1];
