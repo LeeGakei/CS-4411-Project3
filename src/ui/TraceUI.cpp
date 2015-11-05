@@ -92,6 +92,30 @@ void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 	((TraceUI*)(o->user_data()))->m_nDepth=int( ((Fl_Slider *)o)->value() ) ;
 }
 
+void TraceUI::cb_AttConstantSlides(Fl_Widget* o, void* v){
+	((TraceUI*)(o->user_data()))->m_nAttConstant = int(((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_AttLinearSlides(Fl_Widget* o, void* v){
+	((TraceUI*)(o->user_data()))->m_nAttLinear = int(((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_AttQuadraticSlides(Fl_Widget* o, void* v){
+	((TraceUI*)(o->user_data()))->m_nAttQuadratic = int(((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_AmbientLightSlides(Fl_Widget* o, void* v){
+	((TraceUI*)(o->user_data()))->m_nAmbientLight = int(((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_usingUISettingButton(Fl_Widget* o, void* v)
+{
+	TraceUI *pUI = ((TraceUI*)(o->user_data()));
+
+	if (pUI->usingUISetting == true) pUI->usingUISetting = false;
+	else pUI->usingUISetting = true;
+}
+
 void TraceUI::cb_render(Fl_Widget* o, void* v)
 {
 	char buffer[256];
@@ -214,7 +238,13 @@ TraceUI::TraceUI() {
 	// init.
 	m_nDepth = 0;
 	m_nSize = 150;
-	m_mainWindow = new Fl_Window(100, 40, 320, 100, "Ray <Not Loaded>");
+	m_nAttConstant = 0.25;
+	m_nAttLinear = 0.25;
+	m_nAttQuadratic = 0.50;
+	m_nAmbientLight = 0.20;
+	usingUISetting = false;
+
+	m_mainWindow = new Fl_Window(100, 40, 320, 300, "Ray <Not Loaded>");
 		m_mainWindow->user_data((void*)(this));	// record self to be used by static callback functions
 		// install menu bar
 		m_menubar = new Fl_Menu_Bar(0, 0, 320, 25);
@@ -254,10 +284,66 @@ TraceUI::TraceUI() {
 		m_stopButton->user_data((void*)(this));
 		m_stopButton->callback(cb_stop);
 
+		// install attenuation constant
+		m_attConstantSlider = new Fl_Value_Slider(10, 80, 150, 20, "Attenuation,Constant");
+		m_attConstantSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_attConstantSlider->type(FL_HOR_NICE_SLIDER);
+		m_attConstantSlider->labelfont(FL_COURIER);
+		m_attConstantSlider->labelsize(12);
+		m_attConstantSlider->minimum(0);
+		m_attConstantSlider->maximum(1);
+		m_attConstantSlider->step(0.01);
+		m_attConstantSlider->value(m_nAttConstant);
+		m_attConstantSlider->align(FL_ALIGN_RIGHT);
+		m_attConstantSlider->callback(cb_AttConstantSlides);
+
+		// install attenuation linear
+		m_attLinearSlider = new Fl_Value_Slider(10, 105, 150, 20, "Attenuation,Linear");
+		m_attLinearSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_attLinearSlider->type(FL_HOR_NICE_SLIDER);
+		m_attLinearSlider->labelfont(FL_COURIER);
+		m_attLinearSlider->labelsize(12);
+		m_attLinearSlider->minimum(0);
+		m_attLinearSlider->maximum(1);
+		m_attLinearSlider->step(0.01);
+		m_attLinearSlider->value(m_nAttLinear);
+		m_attLinearSlider->align(FL_ALIGN_RIGHT);
+		m_attLinearSlider->callback(cb_AttLinearSlides);
+
+		// install attenuation quadratic
+		m_attQuadraticSlider = new Fl_Value_Slider(10, 130, 150, 20, "Attenuation,Quadratic");
+		m_attQuadraticSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_attQuadraticSlider->type(FL_HOR_NICE_SLIDER);
+		m_attQuadraticSlider->labelfont(FL_COURIER);
+		m_attQuadraticSlider->labelsize(12);
+		m_attQuadraticSlider->minimum(0);
+		m_attQuadraticSlider->maximum(1);
+		m_attQuadraticSlider->step(0.01);
+		m_attQuadraticSlider->value(m_nAttQuadratic);
+		m_attQuadraticSlider->align(FL_ALIGN_RIGHT);
+		m_attQuadraticSlider->callback(cb_AttQuadraticSlides);
+
+		// install Ambient Light
+		m_ambientLightSlider = new Fl_Value_Slider(10, 155, 150, 20, "Ambient Light");
+		m_ambientLightSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_ambientLightSlider->type(FL_HOR_NICE_SLIDER);
+		m_ambientLightSlider->labelfont(FL_COURIER);
+		m_ambientLightSlider->labelsize(12);
+		m_ambientLightSlider->minimum(0);
+		m_ambientLightSlider->maximum(1);
+		m_ambientLightSlider->step(0.01);
+		m_ambientLightSlider->value(m_nAmbientLight);
+		m_ambientLightSlider->align(FL_ALIGN_RIGHT);
+		m_ambientLightSlider->callback(cb_AmbientLightSlides);
+
+		usingUISettingButton = new Fl_Light_Button(10, 180, 300, 20, "using UI Attenuation and Ambient Settings");
+		usingUISettingButton->user_data((void*)(this));   // record self to be used by static callback functions
+		usingUISettingButton->callback(cb_usingUISettingButton);
+		usingUISettingButton->clear_changed();
+
 		m_mainWindow->callback(cb_exit2);
 		m_mainWindow->when(FL_HIDE);
     m_mainWindow->end();
-
 	// image view
 	m_traceGlWindow = new TraceGLWindow(100, 150, m_nSize, m_nSize, "Rendered Image");
 	m_traceGlWindow->end();

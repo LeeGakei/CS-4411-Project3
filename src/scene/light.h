@@ -56,9 +56,10 @@ public:
 	virtual vec3f getColor( const vec3f& P ) const;
 	virtual vec3f getDirection( const vec3f& P ) const;
 
-	double constant_attenuation_coeff;
-	double linear_attenuation_coeff;
-	double quadratic_attenuation_coeff;
+	//init for avoiding divide by zero
+	double constant_attenuation_coeff = 1;
+	double linear_attenuation_coeff = 1;
+	double quadratic_attenuation_coeff = 1;
 
 protected:
 	vec3f position;

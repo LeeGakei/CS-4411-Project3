@@ -1,6 +1,9 @@
 #include "ray.h"
 #include "material.h"
 #include "light.h"
+#include "../ui/TraceUI.h"
+
+extern TraceUI* traceUI;
 
 // Apply the phong model to this point on the surface of the object, returning
 // the color of that point.
@@ -37,7 +40,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			vec3f V = (scene->getCamera()->getEye() - intersectionPoint).normalize();
 			double cosCigama = R.dot(V);
 			cosCigama = max(0.0, cosCigama);
-			double nShiniess = 1 / (1 - m.shininess);
+			double nShiniess = 1 / (1.0000005 - m.shininess);
 			vec3f I2 = m.ks * pow(cosCigama, nShiniess);
 			//distance Attenuation and plus intensity of the light
 			vec3f total_I = (I1 + I2)*l->distanceAttenuation(intersectionPoint)*l->shadowAttenuation(intersectionPoint);
@@ -54,6 +57,9 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			I3[1] *= m.ka[1];
 			I3[2] *= m.ka[2];
 
+			if (traceUI->usingUISetting){
+				I3 *= traceUI->m_nAmbientLight;
+			}
 			I += I3;
 		}
 		else{

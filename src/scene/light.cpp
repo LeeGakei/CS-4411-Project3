@@ -2,8 +2,10 @@
 
 #include "light.h"
 #include "../RayTracer.h"
+#include "../ui/TraceUI.h"
 
 extern RayTracer* theRayTracer;
+extern TraceUI* traceUI;
 
 double DirectionalLight::distanceAttenuation( const vec3f& P ) const
 {
@@ -52,6 +54,12 @@ double PointLight::distanceAttenuation( const vec3f& P ) const
 	double a = this->constant_attenuation_coeff;
 	double b = this->linear_attenuation_coeff;
 	double c = this->quadratic_attenuation_coeff;
+	if (traceUI->usingUISetting){
+		a *= traceUI->m_nAttConstant;
+		b *= traceUI->m_nAttLinear;
+		c *= traceUI->m_nAttQuadratic;
+	}
+
 	result = 1.0 / (a + b * d + c * d * d);
 
 	return min(1.0,result);
