@@ -62,25 +62,27 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			I += I1;
 
 			//refraction
-			double index_of_air = 1.000277;
-			double n_i = 0.0;
-			double n_t = 0.0;
-			if (isEnteringObject(r, i)){
-				n_i = index_of_air;
-				n_t = m.index;
-			}
-			else{
-				n_i = m.index;
-				n_t = index_of_air;
-			}
-			if (notTIR(r, i, n_i, n_t)){
-				ray T = getRetractionDirection(r, i, n_i, n_t);
-				T.isRefracted = true;
-				vec3f I2 = traceRay(scene, T, vec3f(1.0, 1.0, 1.0), depth - 1);
-				I2[0] *= m.kt[0];
-				I2[1] *= m.kt[1];
-				I2[2] *= m.kt[2];
-				I += I2;
+			if (m.kt.length_squared() != 0){
+				double index_of_air = 1.000277;
+				double n_i = 0.0;
+				double n_t = 0.0;
+				if (isEnteringObject(r, i)){
+					n_i = index_of_air;
+					n_t = m.index;
+				}
+				else{
+					n_i = m.index;
+					n_t = index_of_air;
+				}
+				if (notTIR(r, i, n_i, n_t)){
+					ray T = getRetractionDirection(r, i, n_i, n_t);
+					T.isRefracted = true;
+					vec3f I2 = traceRay(scene, T, vec3f(1.0, 1.0, 1.0), depth - 1);
+					I2[0] *= m.kt[0];
+					I2[1] *= m.kt[1];
+					I2[2] *= m.kt[2];
+					I += I2;
+				}
 			}
 		}
 
