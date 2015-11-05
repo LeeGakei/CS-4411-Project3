@@ -37,7 +37,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			//specular reflection
 			vec3f R = r.getReflectDirection(i).getDirection();
 			vec3f eye = scene->getCamera()->getEye();
-			vec3f V = (scene->getCamera()->getEye() - intersectionPoint).normalize();
+			vec3f V = (eye - intersectionPoint).normalize();
 			double cosCigama = R.dot(V);
 			cosCigama = max(0.0, cosCigama);
 			double nShiniess = 1 / (1.0000005 - m.shininess);

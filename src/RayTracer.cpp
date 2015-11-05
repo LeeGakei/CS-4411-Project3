@@ -260,10 +260,10 @@ ray RayTracer::getRetractionDirection(const ray input, const isect intersection,
 
 	//the normal vecter is not always on the input ray side
 	if (isEnteringObject(input, intersection)){
-		_d.rotateArbitraryLine(n.cross(_d), output, -input_angle - M_PI / 2 + output_angle);
+		_d.rotateArbitraryLine(n.cross(_d), output, -input_angle - M_PI + output_angle);
 	}
 	else{
-		_d.rotateArbitraryLine(_d.cross(n), output, -input_angle - M_PI / 2 + output_angle);
+		_d.rotateArbitraryLine(_d.cross(n), output, -input_angle - M_PI + output_angle);
 	}
 
 	return ray(input.at(intersection.t),output);
