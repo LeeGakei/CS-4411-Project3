@@ -61,7 +61,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			I1[2] *= m.kr[2];
 			I += I1;
 
-			//retraction
+			//refraction
 			double index_of_air = 1.000277;
 			double n_i = 0.0;
 			double n_t = 0.0;
@@ -75,6 +75,7 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 			}
 			if (notTIR(r, i, n_i, n_t)){
 				ray T = getRetractionDirection(r, i, n_i, n_t);
+				T.isRefracted = true;
 				vec3f I2 = traceRay(scene, T, vec3f(1.0, 1.0, 1.0), depth - 1);
 				I2[0] *= m.kt[0];
 				I2[1] *= m.kt[1];

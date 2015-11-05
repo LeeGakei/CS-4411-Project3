@@ -33,6 +33,12 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			//cosTheta = abs(cosTheta);
 			cosTheta = max(0.0, cosTheta);
 			vec3f I1 = m.kd * cosTheta;
+			if (r.isRefracted){
+				I1[0] *= (1.0 - m.kt[0]);
+				I1[1] *= (1.0 - m.kt[1]);
+				I1[2] *= (1.0 - m.kt[2]);
+			}
+
 
 			//specular reflection
 			vec3f R = r.getReflectDirection(i).getDirection();
@@ -57,6 +63,11 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			I3[1] *= m.ka[1];
 			I3[2] *= m.ka[2];
 
+			if (r.isRefracted){
+				I3[0] *= (1.0 - m.kt[0]);
+				I3[1] *= (1.0 - m.kt[1]);
+				I3[2] *= (1.0 - m.kt[2]);
+			}
 			if (traceUI->usingUISetting){
 				I3 *= traceUI->m_nAmbientLight;
 			}

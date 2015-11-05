@@ -34,6 +34,8 @@ public:
 	vec3f getDirection() const { return d; }
 	ray getReflectDirection(isect intersection)const;
 
+	bool isRefracted = false;
+
 protected:
 	vec3f p;
 	vec3f d;
