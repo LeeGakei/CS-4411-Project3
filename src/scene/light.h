@@ -58,8 +58,8 @@ public:
 
 	//init for avoiding divide by zero
 	double constant_attenuation_coeff = 1;
-	double linear_attenuation_coeff = 1;
-	double quadratic_attenuation_coeff = 1;
+	double linear_attenuation_coeff = 0;
+	double quadratic_attenuation_coeff = 0;
 
 protected:
 	vec3f position;
