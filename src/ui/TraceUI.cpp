@@ -93,19 +93,19 @@ void TraceUI::cb_depthSlides(Fl_Widget* o, void* v)
 }
 
 void TraceUI::cb_AttConstantSlides(Fl_Widget* o, void* v){
-	((TraceUI*)(o->user_data()))->m_nAttConstant = int(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nAttConstant = double(((Fl_Slider *)o)->value());
 }
 
 void TraceUI::cb_AttLinearSlides(Fl_Widget* o, void* v){
-	((TraceUI*)(o->user_data()))->m_nAttLinear = int(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nAttLinear = double(((Fl_Slider *)o)->value());
 }
 
 void TraceUI::cb_AttQuadraticSlides(Fl_Widget* o, void* v){
-	((TraceUI*)(o->user_data()))->m_nAttQuadratic = int(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nAttQuadratic = double(((Fl_Slider *)o)->value());
 }
 
 void TraceUI::cb_AmbientLightSlides(Fl_Widget* o, void* v){
-	((TraceUI*)(o->user_data()))->m_nAmbientLight = int(((Fl_Slider *)o)->value());
+	((TraceUI*)(o->user_data()))->m_nAmbientLight = double(((Fl_Slider *)o)->value());
 }
 
 void TraceUI::cb_usingUISettingButton(Fl_Widget* o, void* v)
