@@ -27,6 +27,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			//diffused reflection
 			vec3f dir = l->getDirection(intersectionPoint);
 			double cosTheta = dir.dot(i.N);
+			//cosTheta = abs(cosTheta);
 			cosTheta = max(0.0, cosTheta);
 			vec3f I1 = m.kd * cosTheta;
 
@@ -38,7 +39,6 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			cosCigama = max(0.0, cosCigama);
 			double nShiniess = 1 / (1 - m.shininess);
 			vec3f I2 = m.ks * pow(cosCigama, nShiniess);
-
 			//distance Attenuation and plus intensity of the light
 			vec3f total_I = (I1 + I2)*l->distanceAttenuation(intersectionPoint)*l->shadowAttenuation(intersectionPoint);
 			vec3f intensityOfLight = l->getColor(intersectionPoint);
