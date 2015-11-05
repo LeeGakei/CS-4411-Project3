@@ -63,6 +63,8 @@ public:
 
 protected:
 	vec3f position;
+
+	bool threePointsIsInAGoodSeqence(const vec3f& p1, const vec3f& p2, const vec3f& p3)const;
 };
 
 class AmbientLight
