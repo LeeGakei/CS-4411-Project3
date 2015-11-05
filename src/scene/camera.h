@@ -9,6 +9,7 @@ public:
     Camera();
     void rayThrough( double x, double y, ray &r );
     void setEye( const vec3f &eye );
+	vec3f getEye();
     void setLook( double, double, double, double );
     void setLook( const vec3f &viewDir, const vec3f &upDir );
     void setFOV( double );

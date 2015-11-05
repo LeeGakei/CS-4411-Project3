@@ -31,6 +31,10 @@ Camera::setEye( const vec3f &eye )
     this->eye = eye;
 }
 
+vec3f Camera::getEye(){
+	return this->eye;
+}
+
 void
 Camera::setLook( double r, double i, double j, double k )
 // Set the direction for the camera to look using a quaternion.  The

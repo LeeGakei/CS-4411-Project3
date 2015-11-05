@@ -131,5 +131,9 @@ bool Box::intersectLocal( const ray& r, isect& i ) const
 		}
 	}
 
+	if (haveIntersection){
+		i.t = t;
+	}
+
 	return haveIntersection;
 }

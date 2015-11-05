@@ -32,7 +32,7 @@ public:
 
 	vec3f getPosition() const { return p; }
 	vec3f getDirection() const { return d; }
-	ray getReflectDirection(isect intersection);
+	ray getReflectDirection(isect intersection)const;
 
 protected:
 	vec3f p;

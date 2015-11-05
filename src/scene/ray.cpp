@@ -8,7 +8,7 @@ isect::getMaterial() const
     return material ? *material : obj->getMaterial();
 }
 
-ray ray::getReflectDirection(isect intersection){
+ray ray::getReflectDirection(isect intersection)const{
 	double t = intersection.t;
 	vec3f p = this->getPosition();
 	vec3f d = this->getDirection();
@@ -19,5 +19,5 @@ ray ray::getReflectDirection(isect intersection){
 	vec3f c = a - a.dot(b) * b;
 	vec3f out = b - c;
 
-	return ray(intersectPoint, out);
+	return ray(intersectPoint, out.normalize());
 };

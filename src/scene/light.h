@@ -12,11 +12,14 @@ public:
 	virtual vec3f getColor( const vec3f& P ) const = 0;
 	virtual vec3f getDirection( const vec3f& P ) const = 0;
 
+	string		kind;
+
 protected:
 	Light( Scene *scene, const vec3f& col )
 		: SceneElement( scene ), color( col ) {}
 
 	vec3f 		color;
+
 };
 
 class DirectionalLight
@@ -24,7 +27,9 @@ class DirectionalLight
 {
 public:
 	DirectionalLight( Scene *scene, const vec3f& orien, const vec3f& color )
-		: Light( scene, color ), orientation( orien ) {}
+		: Light(scene, color), orientation(orien) {
+		kind = "DirectionalLight";
+	}
 	virtual vec3f shadowAttenuation(const vec3f& P) const;
 	virtual double distanceAttenuation( const vec3f& P ) const;
 	virtual vec3f getColor( const vec3f& P ) const;
@@ -39,9 +44,13 @@ class PointLight
 {
 public:
 	PointLight( Scene *scene, const vec3f& pos, const vec3f& color )
-		: Light( scene, color ), position( pos ) {}
+		: Light( scene, color ), position( pos ) {
+		kind = "PointLight";
+	}
 	PointLight(Scene *scene, const vec3f& pos, const vec3f& color,double constant_,double linear_,double quadratic_)
-		: Light(scene, color), position(pos), constant_attenuation_coeff(constant_), linear_attenuation_coeff(linear_), quadratic_attenuation_coeff(quadratic_){}
+		: Light(scene, color), position(pos), constant_attenuation_coeff(constant_), linear_attenuation_coeff(linear_), quadratic_attenuation_coeff(quadratic_){
+		kind = "PointLight";
+	}
 	virtual vec3f shadowAttenuation(const vec3f& P) const;
 	virtual double distanceAttenuation( const vec3f& P ) const;
 	virtual vec3f getColor( const vec3f& P ) const;
@@ -60,7 +69,9 @@ class AmbientLight
 {
 public:
 	AmbientLight(Scene *scene,  const vec3f& color)
-		: Light(scene, color){}
+		: Light(scene, color){
+		kind = "AmbientLight";
+	}
 
 	//none of these really matter
 	virtual vec3f shadowAttenuation(const vec3f& P) const;
