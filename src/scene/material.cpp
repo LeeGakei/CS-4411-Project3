@@ -20,9 +20,12 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 	Material m = i.getMaterial();
 	vec3f I = m.ke;
 	vec3f intersectionPoint = r.at(i.t);
+	int test = 0;
 
 	for (list<Light*>::const_iterator iterater = scene->beginLights(); iterater != scene->endLights(); iterater++){
 		Light* l = *iterater;
+		test = test + 1;
+		string tests = l->kind;
 		if (l->kind == "DirectionalLight" || l->kind == "PointLight"){
 			//diffused reflection
 			vec3f dir = l->getDirection(intersectionPoint);
@@ -36,7 +39,7 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			vec3f V = (scene->getCamera()->getEye() - intersectionPoint).normalize();
 			double cosCigama = R.dot(V);
 			cosCigama = max(0.0, cosCigama);
-			vec3f I2 = m.ks * pow(cosCigama, m.shininess);
+			vec3f I2 = m.ks * pow(cosCigama, 1.0/m.shininess);
 
 			//distance Attenuation and plus intensity of the light
 			vec3f total_I = (I1 + I2)*l->distanceAttenuation(intersectionPoint)*l->shadowAttenuation(intersectionPoint);
