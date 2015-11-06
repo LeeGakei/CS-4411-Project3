@@ -45,7 +45,8 @@ vec3f Material::shade( Scene *scene, const ray& r, const isect& i ) const
 			vec3f V = (eye - intersectionPoint).normalize();
 			double cosCigama = R.dot(V);
 			cosCigama = max(0.0, cosCigama);
-			double nShiniess = 1 / (1.0000005 - m.shininess);
+			//double nShiniess = 1 / (1.0000005 - m.shininess);
+			double nShiniess = m.shininess * 128;
 			vec3f I2 = m.ks * pow(cosCigama, nShiniess);
 			//distance Attenuation and plus intensity of the light
 			vec3f total_I = (I1 + I2)*l->distanceAttenuation(intersectionPoint);

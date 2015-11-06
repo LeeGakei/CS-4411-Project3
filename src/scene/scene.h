@@ -196,10 +196,11 @@ public:
     
 	Geometry( Scene *scene ) 
 		: SceneElement( scene ) {}
+	TransformNode *transform;
 
 protected:
 	BoundingBox bounds;
-    TransformNode *transform;
+
 };
 
 // A SceneObject is a real actual thing that we want to model in the 
