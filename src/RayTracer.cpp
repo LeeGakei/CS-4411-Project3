@@ -21,18 +21,24 @@ vec3f RayTracer::trace( Scene *scene, double x, double y )
 {
     ray r( vec3f(0,0,0), vec3f(0,0,0) );
     scene->getCamera()->rayThrough( x,y,r );
-	return traceRay(scene, r, vec3f(1.0, 1.0, 1.0), traceUI->getDepth()).clamp();
+	return (traceRay(scene, r, vec3f(1.0, 1.0, 1.0), traceUI->getDepth(), vec3f(1.0, 1.0, 1.0))  * traceUI->m_nIntensityScale).clamp();
 }
 
 // Do recursive ray tracing!  You'll want to insert a lot of code here
 // (or places called from here) to handle reflection, refraction, etc etc.
+// cumulativeK is the product of all kr and kt, if cumulativeK < IntensityThreshold, the function will not
+// trace that ray
 vec3f RayTracer::traceRay( Scene *scene, const ray& r, 
-	const vec3f& thresh, int depth )
+	const vec3f& thresh, int depth, vec3f cumulativeK)
 {
 	//for debug,we can see how many times the recursive run.
 	if (depth < global_depth){
 		global_depth = depth;
 		printf("new depth: %d", global_depth);
+	}
+
+	if (((cumulativeK[0] + cumulativeK[1] + cumulativeK[2]) / 3.0) < traceUI->m_nIntensityThreshold){
+		return vec3f(0, 0, 0);
 	}
 
 	isect i;
@@ -54,13 +60,22 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 
 		if (depth >= 1){
 			//reflection
-			ray R = getReflectDirection(r, i);
-			vec3f I1 = traceRay(scene, R, vec3f(1.0, 1.0, 1.0), depth - 1);
-			I1[0] *= m.kr[0];
-			I1[1] *= m.kr[1];
-			I1[2] *= m.kr[2];
-			I += I1;
+			if (m.kr.length_squared() != 0){
+				ray R = getReflectDirection(r, i);
+				//for threshold
+				vec3f K;
+				{
+					K[0] = cumulativeK[0] * m.kr[0];
+					K[1] = cumulativeK[1] * m.kr[1];
+					K[2] = cumulativeK[2] * m.kr[2];
+				}
 
+				vec3f I1 = traceRay(scene, R, vec3f(1.0, 1.0, 1.0), depth - 1, K);
+				I1[0] *= m.kr[0];
+				I1[1] *= m.kr[1];
+				I1[2] *= m.kr[2];
+				I += I1;
+			}
 			//refraction
 			if (m.kt.length_squared() != 0){
 				double index_of_air = 1.000277;
@@ -76,7 +91,13 @@ vec3f RayTracer::traceRay( Scene *scene, const ray& r,
 				}
 				if (notTIR(r, i, n_i, n_t)){
 					ray T = getRetractionDirection(r, i, n_i, n_t);
-					vec3f I2 = traceRay(scene, T, vec3f(1.0, 1.0, 1.0), depth - 1);
+					vec3f K;
+					{
+						K[0] = cumulativeK[0] * m.kt[0];
+						K[1] = cumulativeK[1] * m.kt[1];
+						K[2] = cumulativeK[2] * m.kt[2];
+					}
+					vec3f I2 = traceRay(scene, T, vec3f(1.0, 1.0, 1.0), depth - 1,K);
 					I2[0] *= m.kt[0];
 					I2[1] *= m.kt[1];
 					I2[2] *= m.kt[2];

@@ -32,6 +32,9 @@ public:
 	Fl_Slider*			m_attLinearSlider;
 	Fl_Slider*			m_attQuadraticSlider;
 	Fl_Slider*			m_ambientLightSlider;
+	Fl_Slider*			m_intensityScaleSlider;
+	Fl_Slider*			m_intensityThresholdSlider;
+
 	Fl_Light_Button*	usingUISettingButton;
 
 	Fl_Button*			m_renderButton;
@@ -51,6 +54,8 @@ public:
 	double		m_nAttLinear;
 	double		m_nAttQuadratic;
 	double		m_nAmbientLight;
+	double		m_nIntensityScale;
+	double		m_nIntensityThreshold;
 	bool		usingUISetting;
 
 private:
@@ -78,7 +83,11 @@ private:
 	static void cb_AttLinearSlides(Fl_Widget* o, void* v);
 	static void cb_AttQuadraticSlides(Fl_Widget* o, void* v);
 	static void cb_AmbientLightSlides(Fl_Widget* o, void* v);
+	static void cb_IntensityScaleSlides(Fl_Widget* o, void* v);
+	static void cb_IntensityThresholdSlides(Fl_Widget* o, void* v);
 	static void cb_usingUISettingButton(Fl_Widget* o, void* v);
+
+
 
 	static void cb_render(Fl_Widget* o, void* v);
 	static void cb_stop(Fl_Widget* o, void* v);

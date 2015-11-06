@@ -108,6 +108,14 @@ void TraceUI::cb_AmbientLightSlides(Fl_Widget* o, void* v){
 	((TraceUI*)(o->user_data()))->m_nAmbientLight = double(((Fl_Slider *)o)->value());
 }
 
+void TraceUI::cb_IntensityScaleSlides(Fl_Widget* o, void* v){
+	((TraceUI*)(o->user_data()))->m_nIntensityScale = double(((Fl_Slider *)o)->value());
+}
+
+void TraceUI::cb_IntensityThresholdSlides(Fl_Widget* o, void* v){
+	((TraceUI*)(o->user_data()))->m_nIntensityThreshold = double(((Fl_Slider *)o)->value());
+}
+
 void TraceUI::cb_usingUISettingButton(Fl_Widget* o, void* v)
 {
 	TraceUI *pUI = ((TraceUI*)(o->user_data()));
@@ -242,6 +250,8 @@ TraceUI::TraceUI() {
 	m_nAttLinear = 0.25;
 	m_nAttQuadratic = 0.50;
 	m_nAmbientLight = 0.20;
+	m_nIntensityScale = 1.0;
+	m_nIntensityThreshold = 0.1;
 	usingUISetting = false;
 
 	m_mainWindow = new Fl_Window(100, 40, 320, 300, "Ray <Not Loaded>");
@@ -336,7 +346,33 @@ TraceUI::TraceUI() {
 		m_ambientLightSlider->align(FL_ALIGN_RIGHT);
 		m_ambientLightSlider->callback(cb_AmbientLightSlides);
 
-		usingUISettingButton = new Fl_Light_Button(10, 180, 300, 20, "using UI Attenuation and Ambient Settings");
+		// install intensityScaleSlider
+		m_intensityScaleSlider = new Fl_Value_Slider(10, 180, 150, 20, "Intensity Scale");
+		m_intensityScaleSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_intensityScaleSlider->type(FL_HOR_NICE_SLIDER);
+		m_intensityScaleSlider->labelfont(FL_COURIER);
+		m_intensityScaleSlider->labelsize(12);
+		m_intensityScaleSlider->minimum(0.5);
+		m_intensityScaleSlider->maximum(3);
+		m_intensityScaleSlider->step(0.01);
+		m_intensityScaleSlider->value(m_nIntensityScale);
+		m_intensityScaleSlider->align(FL_ALIGN_RIGHT);
+		m_intensityScaleSlider->callback(cb_IntensityScaleSlides);
+
+		// install m_intensityThresholdSlider
+		m_intensityThresholdSlider = new Fl_Value_Slider(10, 205, 150, 20, "Intensity Threshold");
+		m_intensityThresholdSlider->user_data((void*)(this));	// record self to be used by static callback functions
+		m_intensityThresholdSlider->type(FL_HOR_NICE_SLIDER);
+		m_intensityThresholdSlider->labelfont(FL_COURIER);
+		m_intensityThresholdSlider->labelsize(12);
+		m_intensityThresholdSlider->minimum(0);
+		m_intensityThresholdSlider->maximum(1);
+		m_intensityThresholdSlider->step(0.01);
+		m_intensityThresholdSlider->value(m_nIntensityThreshold);
+		m_intensityThresholdSlider->align(FL_ALIGN_RIGHT);
+		m_intensityThresholdSlider->callback(cb_IntensityThresholdSlides);
+
+		usingUISettingButton = new Fl_Light_Button(10, 230, 300, 20, "using UI Attenuation and Ambient Settings");
 		usingUISettingButton->user_data((void*)(this));   // record self to be used by static callback functions
 		usingUISettingButton->callback(cb_usingUISettingButton);
 		usingUISettingButton->clear_changed();
