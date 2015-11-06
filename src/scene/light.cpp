@@ -127,7 +127,7 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
 		}
 	}
 
-		if (hasShadow){
+	if (hasShadow){
 		return vec3f(0, 0, 0);
 	}
 	else{
@@ -161,7 +161,7 @@ vec3f PointLight::shadowAttenuation(const vec3f& P) const
 bool PointLight::threePointsIsInAGoodSeqence(const vec3f& p1, const vec3f& p2, const vec3f& p3)const{
 	vec3f v1_to_2 = p2 - p1;
 	vec3f v2_to_3 = p3 - p2;
-	if (abs(v2_to_3[0]) < RAY_EPSILON  || abs(v2_to_3[1]) < RAY_EPSILON  || abs(v2_to_3[2]) < RAY_EPSILON){
+	if (abs(v2_to_3[0]) < RAY_EPSILON  && abs(v2_to_3[1]) < RAY_EPSILON  && abs(v2_to_3[2]) < RAY_EPSILON){
 		return false;
 	}
 	return v1_to_2.dot(v2_to_3) > 0;
